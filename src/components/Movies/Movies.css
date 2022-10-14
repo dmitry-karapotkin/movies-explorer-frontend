@@ -1,0 +1,21 @@
+.movies {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0 70px;
+  box-sizing: border-box;
+  background-color: #202020;
+}
+
+@media (max-width: 768px) {
+  .movies {
+    padding: 0 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .movies {
+    padding: 0 10px;
+  }
+}
