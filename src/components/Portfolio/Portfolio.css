@@ -36,11 +36,22 @@
   border-bottom: 1px solid #424242;
 }
 
-.portfolio__item::after {
+.portfolio__link {
+  text-decoration: none;
+  color: #FFFFFF;
+  transition: .6s;
+}
+
+.portfolio__link::after {
   content: '\2197';
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.portfolio__link:hover {
+  opacity: .6;
+  text-decoration: underline solid;
 }
 
 @media (max-width: 768px) {

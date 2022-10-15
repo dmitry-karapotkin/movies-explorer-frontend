@@ -22,9 +22,11 @@ function Promo() {
           </p>
         </div>
       </div>
-      <button className="promo__next-button">
-          Узнай больше
-      </button>
+      <a href="#aboutProject">
+        <button className="promo__next-button">
+            Узнай больше
+        </button>
+      </a>
     </section>
   );
 }

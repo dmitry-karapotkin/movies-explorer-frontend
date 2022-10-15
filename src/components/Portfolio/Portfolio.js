@@ -8,13 +8,31 @@ function Portfolio() {
       </h3>
       <ul className="portfolio__list">
         <li className="portfolio__item">
-          Статичный сайт
+          <a
+            className="portfolio__link"
+            href="https://dmitry-karapotkin.github.io/russian-travel"
+            target="_blank"
+          >
+            Статичный сайт
+          </a>
         </li>
         <li className="portfolio__item">
-          Адаптивный сайт
+          <a
+            className="portfolio__link"
+            href="https://dmitry-karapotkin.github.io/mesto"
+            target="_blank"
+          >
+            Адаптивный сайт
+          </a>
         </li>
         <li className="portfolio__item">
-          Адаптивное приложение
+          <a
+            className="portfolio__link"
+            href="https://dmitry-karapotkin.github.io/react-mesto-auth"
+            target="_blank"
+          >
+            Адаптивное приложение
+          </a>
         </li>
       </ul>
     </div>

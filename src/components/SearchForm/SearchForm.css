@@ -44,7 +44,12 @@
   min-width: 80px;
   height: 34px;
   border-radius: 34px;
-  border: 0;
+  border: 1px solid #4285F4;
+  transition: .5s;
+}
+
+.search-form__post-button:hover {
+  border-color: #FFFFFF;
 }
 
 .search-form__icon {

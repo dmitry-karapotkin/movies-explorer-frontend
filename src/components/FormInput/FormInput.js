@@ -6,7 +6,7 @@ function FormInput ({ label, type, isError }) {
       <label className="form-input__label">
         {label}
       </label>
-      <input type={type} className="form-input__input" />
+      <input type={type} className="form-input__input" required />
       <span className={`form-input__error ${ isError ? "form-input__error_type_active" : "" }`}>
         Что-то пошло не так...
       </span>
