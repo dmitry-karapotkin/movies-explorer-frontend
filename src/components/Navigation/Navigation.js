@@ -8,6 +8,10 @@ function Navigation({ isOpen, closeMenu }) {
     closeMenu(!isOpen);
   }
 
+  function handleLinkClick () {
+    closeMenu(false);
+  };
+
   return (
     <nav className={`slide-menu ${isOpen ? "slide-menu_state_open" : ""}`}>
       <img
@@ -18,7 +22,8 @@ function Navigation({ isOpen, closeMenu }) {
       />
       <Link
         className="slide-menu__link"
-        to="/movies"
+        to="/"
+        onClick={handleLinkClick}
       >
         Главная
       </Link>
@@ -26,6 +31,7 @@ function Navigation({ isOpen, closeMenu }) {
         className="slide-menu__link"
         activeClassName="slide-menu__link_type_active"
         to="/movies"
+        onClick={handleLinkClick}
       >
         Фильмы
       </NavLink>
@@ -33,12 +39,14 @@ function Navigation({ isOpen, closeMenu }) {
         className="slide-menu__link"
         activeClassName="slide-menu__link_type_active"
         to="/saved-movies"
+        onClick={handleLinkClick}
       >
         Сохранённые фильмы
       </NavLink>
       <Link
         className="slide-menu__profile-link"
         to="/profile"
+        onClick={handleLinkClick}
       >
         <p className="slide-menu__account">Аккаунт</p>
         <img

@@ -5,6 +5,7 @@ import Techs from '../Techs/Techs';
 import AboutMe from '../AboutMe/AboutMe';
 
 function Main() {
+
   return (
     <main className="main-page">
       <Promo />

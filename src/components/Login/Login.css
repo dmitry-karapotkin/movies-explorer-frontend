@@ -46,6 +46,11 @@
   cursor: pointer;
 }
 
+.login__submit-button_disabled {
+  background-color: #EE3465;
+  cursor: not-allowed;
+}
+
 .login__alternative-text {
   font-weight: 400;
   font-size: 14px;

@@ -6,7 +6,7 @@ import menuIcon from '../../images/menu-icon.svg';
 import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
-function Header() {
+function Header({ isMainPage }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   function handleMenuClick() {
@@ -14,7 +14,7 @@ function Header() {
   };
 
   return (
-    <header className="header">
+    <header className={`header ${ isMainPage ? "header_main-page" : ""}`}>
       <Link className="header__logo" to="/">
         <img
           src={mainLogo}
