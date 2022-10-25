@@ -1,14 +1,8 @@
 import './MoviesCard.css';
-import { useState, useContext } from 'react';
-import { api } from '../../utils/MainApi';
-import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { useState } from 'react';
 import { BASE_URL } from '../../utils/constants';
 
-function MoviesCard ({ card, isSelected, isLiked }) {
-  const {
-    savedMoviesList,
-    setSavedMoviesList,
-  } = useContext(CurrentUserContext);
+function MoviesCard ({ card, isSelected, isLiked, handleClick }) {
   const [isSaved, setSaved] = useState(isLiked);
 
   const cardImage = isSelected ? card.image : BASE_URL + card.image.url;
@@ -25,43 +19,6 @@ function MoviesCard ({ card, isSelected, isLiked }) {
     return hour + "ч" + minute + "мин";
   }
 
-  function handleSaveClick (e) {
-    const movie = {
-      country: card.country,
-      director: card.director,
-      duration: card.duration,
-      year: card.year,
-      description: card.description,
-      image: BASE_URL + card.image.url,
-      trailerLink: card.trailerLink,
-      thumbnail: BASE_URL + card.image.formats.thumbnail.url,
-      movieId: card.id,
-      nameRU: card.nameRU,
-      nameEN: card.nameEN,
-    };
-
-    if (isSaved) {
-      api.deleteMovie(movie.movieId)
-        .then((_) => {
-          setSavedMoviesList(savedMoviesList.filter(item => item.movieId !== movie.movieId));
-          setSaved(false);
-        })
-    } else {
-      api.postMovie(movie)
-        .then((data) => {
-          setSavedMoviesList([...savedMoviesList, data]);
-          setSaved(true);
-        })
-    }
-  }
-
-  function handleDeleteClick (e) {
-    api.deleteMovie(card.movieId)
-      .then((_) => {
-        setSavedMoviesList(savedMoviesList.filter(item => item.movieId !== card.movieId));
-      })
-  };
-
   return (
     <figure className="card">
       <a href={card.trailerLink} target="_blank">
@@ -77,7 +34,7 @@ function MoviesCard ({ card, isSelected, isLiked }) {
               `card__time ${ isSelected ? "card__time_type_selected" : "" }
               ${ isSaved ? "card__time_type_short" : "card__time_type_long" }`
             }
-            onClick={ isSelected ? handleDeleteClick: handleSaveClick }
+            onClick={() => handleClick({ card, baseUrl: BASE_URL, isSaved, setSaved })}
           />
         </div>
         <p className="card__duration">

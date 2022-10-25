@@ -14,8 +14,6 @@ function Register() {
     errors,
     setErrors,
     isValid,
-    setCurrentUser,
-    resetForm,
     isPopupOpen,
     setPopupOpen,
     isSuccess,
@@ -31,12 +29,6 @@ function Register() {
     })
       .then((data) => {
         if (data.email) {
-          resetForm();
-          setCurrentUser({
-            id: data._id,
-            username: data.name,
-            email: data.email,
-          });
           setSuccess(true);
           setPopupOpen(true);
         }

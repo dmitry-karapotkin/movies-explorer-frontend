@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
-function MoviesCardList ({ cardList, isError, isSelected, isFound }) {
+function MoviesCardList ({ cardList, isError, isSelected, isFound, handleClick }) {
   const {
     device,
     savedMoviesList,
@@ -38,6 +38,7 @@ function MoviesCardList ({ cardList, isError, isSelected, isFound }) {
                 card={item}
                 isSelected={isSelected}
                 isLiked={() => isLiked(item.id)}
+                handleClick={handleClick}
                 key={item.id || item.movieId}
               />
             )

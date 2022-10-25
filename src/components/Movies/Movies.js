@@ -3,6 +3,7 @@ import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import { useState, useContext } from 'react';
 import { api } from '../../utils/MoviesApi';
+import { api as mainApi } from '../../utils/MainApi';
 import filterMovies from '../../utils/search';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import Popup from '../Popup/Popup';
@@ -16,8 +17,12 @@ function Movies() {
     isPopupOpen,
     setPopupOpen,
     setLoading,
+    isSuccess,
+    setSuccess,
     moviesList,
     setMoviesList,
+    savedMoviesList,
+    setSavedMoviesList,
     queryText,
     toggleState,
   } = useContext(CurrentUserContext);
@@ -49,6 +54,48 @@ function Movies() {
     }
   }
 
+  function handleSaveClick ({ card, baseUrl, isSaved, setSaved }) {
+    const movie = {
+      country: card.country,
+      director: card.director,
+      duration: card.duration,
+      year: card.year,
+      description: card.description,
+      image: baseUrl + card.image.url,
+      trailerLink: card.trailerLink,
+      thumbnail: baseUrl + card.image.formats.thumbnail.url,
+      movieId: card.id,
+      nameRU: card.nameRU,
+      nameEN: card.nameEN,
+    };
+
+    if (isSaved) {
+      mainApi.deleteMovie(movie.movieId)
+        .then((_) => {
+          setSavedMoviesList(savedMoviesList.filter(item => item.movieId !== movie.movieId));
+          setSaved(false);
+        })
+        .catch(err => {
+          setErrorMessage(err);
+          setSuccess(false);
+          setPopupOpen(true);
+        })
+    } else {
+      mainApi.postMovie(movie)
+        .then((data) => {
+          if (data) {
+            setSavedMoviesList([...savedMoviesList, data]);
+            setSaved(true);
+          }
+        })
+        .catch(err => {
+          setErrorMessage(err);
+          setSuccess(false);
+          setPopupOpen(true);
+        })
+    }
+  }
+
   return (
     <main className="movies">
       <SearchForm
@@ -57,12 +104,13 @@ function Movies() {
       />
       <MoviesCardList
         cardList={moviesList}
+        handleClick={handleSaveClick}
         isError={isError}
         isSelected={false}
         isFound={isFound}
       />
       <Popup
-        isSuccess={false}
+        isSuccess={isSuccess}
         setPopupOpen={setPopupOpen}
         isPopupOpen={isPopupOpen}
         errorMessage={errorMessage}

@@ -61,7 +61,6 @@ function App() {
       .then((data) => {
         if (data !== undefined) {
           setCurrentUser({
-            id: data._id,
             username: data.name,
             email: data.email,
           });

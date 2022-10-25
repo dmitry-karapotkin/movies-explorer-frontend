@@ -4,8 +4,12 @@ import { useHistory } from 'react-router-dom';
 import successIcon from '../../images/success-icon.svg';
 import errorIcon from '../../images/error-icon.svg';
 import closeIcon from '../../images/cross-icon.svg';
+import { useContext } from 'react';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 function Popup ({ isPopupOpen, setPopupOpen, isSuccess, successMessage, errorMessage }) {
+
+  const { resetForm, setCurrentUser, values} = useContext(CurrentUserContext);
 
   const history = useHistory();
 
@@ -18,12 +22,20 @@ function Popup ({ isPopupOpen, setPopupOpen, isSuccess, successMessage, errorMes
 
     document.addEventListener('keydown', closeByEscape);
 
-    return () => document.removeEventListener('keydown', closeByEscape);
+    return () => {
+      document.removeEventListener('keydown', closeByEscape);
+      resetForm();
+    }
   }, []);
 
   function handleClose() {
     setPopupOpen(false);
     if (isSuccess && history.location.pathname === '/signup') {
+      setCurrentUser({
+        username: values["register-name"],
+        email: values["register-email"]
+      });
+      resetForm();
       history.push('/');
     }
   };

@@ -5,6 +5,7 @@ import { useState, useEffect, useContext } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import filterMovies from '../../utils/search';
 import Popup from '../Popup/Popup';
+import { api as mainApi } from '../../utils/MainApi';
 
 function SavedMovies() {
   const inputSearchId ="search-text-saved-movies";
@@ -14,9 +15,12 @@ function SavedMovies() {
   const {
     isPopupOpen,
     setPopupOpen,
+    isSuccess,
+    setSuccess,
     setLoading,
     queryText,
     savedMoviesList,
+    setSavedMoviesList,
     toggleState,
   } = useContext(CurrentUserContext);
 
@@ -38,6 +42,19 @@ function SavedMovies() {
     }
   }
 
+  function handleDeleteClick ({ card }) {
+    mainApi.deleteMovie(card.movieId)
+      .then((_) => {
+        setSavedMoviesList(savedMoviesList.filter(item => item.movieId !== card.movieId));
+      })
+      .catch(err => {
+        console.log(err);
+        setErrorMessage(err);
+        setSuccess(false);
+        setPopupOpen(false);
+      })
+  };
+
   useEffect(() => {
     setQuerySavedMoviesList(
       filterMovies(
@@ -56,12 +73,13 @@ function SavedMovies() {
       />
       <MoviesCardList
         cardList={querySavedMoviesList}
+        handleClick={handleDeleteClick}
         isError={false}
         isSelected={true}
         isFound={isFound}
       />
       <Popup
-        isSuccess={false}
+        isSuccess={isSuccess}
         setPopupOpen={setPopupOpen}
         isPopupOpen={isPopupOpen}
         errorMessage={errorMessage}

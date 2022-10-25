@@ -10,10 +10,14 @@ class MainApi {
     if (res.ok) {
       return res.json();
     }
-    return res.json()
+    try {
+      return res.json()
       .then(data => {
         return Promise.reject(`Ошибка: ${data.message}`);
       });
+    } catch {
+      return Promise.reject(`Ошибка: ${res.status}`);
+    }
   }
 
   getMovies() {
@@ -34,7 +38,6 @@ class MainApi {
       body: JSON.stringify(movie),
     })
       .then(this._checkResponse)
-      .catch(err => console.log(err))
 
   }
 
@@ -44,7 +47,7 @@ class MainApi {
       credentials: 'include',
     })
       .then(this._checkResponse)
-      .catch(err => console.log(err))
+
   }
 
   login({ email, password }) {
@@ -65,6 +68,7 @@ class MainApi {
     return fetch(`${this._baseUrl}/signup`, {
       method: 'POST',
       headers: this._headers,
+      credentials: 'include',
       body: JSON.stringify({
         password,
         email,
@@ -110,6 +114,5 @@ class MainApi {
   }
 
 }
-
 
 export const api = new MainApi(options);
