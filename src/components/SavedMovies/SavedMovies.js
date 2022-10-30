@@ -8,33 +8,38 @@ import Popup from '../Popup/Popup';
 import { api as mainApi } from '../../utils/MainApi';
 
 function SavedMovies() {
-  const inputSearchId ="search-text-saved-movies";
-  const [querySavedMoviesList, setQuerySavedMoviesList] = useState([]);
-  const [isFound, setFound] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
+  const inputSearchId ="savedMoviesListQuery";
   const {
+    movies,
+    setMovies,
     isPopupOpen,
     setPopupOpen,
     isSuccess,
     setSuccess,
     setLoading,
-    queryText,
-    savedMoviesList,
-    setSavedMoviesList,
-    toggleState,
   } = useContext(CurrentUserContext);
+  const initIsFound = movies.query[inputSearchId] ?
+                      movies.savedMoviesListQuery.length > 0 : true;
+  const [isFound, setFound] = useState(initIsFound);
+  const [isError, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  function handleSearchSubmit (e) {
+  function handleSearchSubmit (e, queryText) {
     e.preventDefault();
-    if (queryText[inputSearchId]) {
+    if (queryText) {
       setLoading(true);
+      setError(false);
       const filteredMovies = filterMovies(
-        savedMoviesList,
-        queryText[inputSearchId],
-        toggleState[inputSearchId]
+        movies.savedMoviesList,
+        queryText,
+        movies.toggle[inputSearchId]
       );
       setFound(filteredMovies.length > 0);
-      setQuerySavedMoviesList(filteredMovies);
+      setMovies({
+        type: "update",
+        key: inputSearchId,
+        value: filteredMovies
+      });
       setLoading(false);
     } else {
       setErrorMessage("Нужно ввести ключевое слово");
@@ -45,7 +50,20 @@ function SavedMovies() {
   function handleDeleteClick ({ card }) {
     mainApi.deleteMovie(card.movieId)
       .then((_) => {
-        setSavedMoviesList(savedMoviesList.filter(item => item.movieId !== card.movieId));
+        setMovies(
+          {
+            type: "update",
+            key: "savedMoviesList",
+            value: movies.savedMoviesList.filter(item => item.movieId !== card.movieId)
+          }
+        );
+        setMovies(
+          {
+            type: "update",
+            key: inputSearchId,
+            value: movies.savedMoviesListQuery.filter(item => item.movieId !== card.movieId)
+          }
+        )
       })
       .catch(err => {
         console.log(err);
@@ -56,25 +74,34 @@ function SavedMovies() {
   };
 
   useEffect(() => {
-    setQuerySavedMoviesList(
-      filterMovies(
-        savedMoviesList,
-        queryText[inputSearchId],
-        toggleState[inputSearchId]
-      )
-    );
-  }, [savedMoviesList]);
+    mainApi.getMovies()
+      .then((data) => {
+        setMovies({
+          type: "update",
+          key: "savedMoviesList",
+          value: data
+        });
+        if (!movies.query[inputSearchId]) {
+          setMovies({
+            type: "update",
+            key: inputSearchId,
+            value: data
+          })
+        };
+      })
+  }, []);
 
   return (
     <main className="saved-movies">
       <SearchForm
         handleSearchSubmit={handleSearchSubmit}
         inputId={inputSearchId}
+        cards={movies.savedMoviesList}
       />
       <MoviesCardList
-        cardList={querySavedMoviesList}
+        moviesList={movies.savedMoviesListQuery}
         handleClick={handleDeleteClick}
-        isError={false}
+        isError={isError}
         isSelected={true}
         isFound={isFound}
       />

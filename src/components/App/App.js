@@ -1,6 +1,6 @@
 import './App.css';
 import { useEffect, useState, useReducer } from 'react';
-import { Route, Switch, useHistory, Redirect } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation, Redirect } from 'react-router-dom';
 import Main from '../Main/Main';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
@@ -15,52 +15,35 @@ import Preloader from '../Preloader/Preloader';
 
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { useFormValidation } from '../../hooks/UseFormValidation';
-import { api } from '../../utils/MainApi';
+import { api as mainApi } from '../../utils/MainApi';
+import { api as moviesApi } from '../../utils/MoviesApi';
+import {
+  screenReducer,
+  initScreenReducer,
+  moviesReducer,
+  initMoviesReducer
+} from '../../utils/reducer';
 
 
 function App() {
-  const initialWidth = window.innerWidth;
-  const initialQueryText = {
-    "search-text-saved-movies": "",
-    "search-text-movies": ""
-  };
-  const initialToggleState = {
-    "search-text-saved-movies": false,
-    "search-text-movies": false
-  }
-
-  function reducer(_, newWidth) {
-    if (newWidth > 768) {
-      return { screen: 'desktop', addCards: 4, initGrid: 12 };
-    } else if (newWidth > 480) {
-      return { screen: 'tablet', addCards: 2, initGrid: 8 };
-    } else {
-      return { screen: 'mobile', addCards: 2, initGrid: 5 };
-    }
-  };
-
-  function initReducer(initWidth) {
-    return reducer("", initWidth);
-  };
+  const [device, setDevice] = useReducer(screenReducer, window.innerWidth, initScreenReducer);
+  const [movies, setMovies] = useReducer(moviesReducer, null, initMoviesReducer);
 
   const [currentUser, setCurrentUser] = useState({});
-  const [queryText, setQueryText] = useState(initialQueryText);
-  const [moviesList, setMoviesList] = useState([]);
-  const [savedMoviesList, setSavedMoviesList] = useState([]);
-  const [toggleState, setToggleState] = useState(initialToggleState);
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [device, setDevice] = useReducer(reducer, initialWidth, initReducer);
 
   const history = useHistory();
+  const location = useLocation();
   const initialPath = history.location.pathname;
 
   useEffect(() => {
-    api.getUserInfo()
+    mainApi.getUserInfo()
       .then((data) => {
         if (data !== undefined) {
           setCurrentUser({
+            id: data._id,
             username: data.name,
             email: data.email,
           });
@@ -71,39 +54,41 @@ function App() {
         history.push(initialPath);
         setLoading(false);
       });
-  }, []);
-
-  useEffect(() => {
-    api.getMovies()
-      .then((data) => {
-        setSavedMoviesList(data);
+    moviesApi.getMovies()
+    .then((data) => {
+      setMovies({
+        type: "update",
+        key: "moviesList",
+        value: data
       })
+    })
+    .catch(err => console.log(err));
   }, []);
 
   useEffect(() => {
 
-    function throttle(callee, timeout) {
-      let timer = null;
+    function wrapTimeout(callee, timeout) {
+      let timer;
       return function perform(...args) {
-        if (timer) return;
+        if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           callee(...args);
-          clearTimeout(timer);
-          timer = null;
-        }, timeout)
+        }, timeout);
       }
     }
+
 
     const changeScreen = () => {
       const width = window.innerWidth;
       setDevice(width);
+      console.log(width);
     }
 
-    const throttledChangeScreen = throttle(changeScreen, 500);
+    const timeoutChangeScreen = wrapTimeout(changeScreen, 2000);
 
-    window.addEventListener('resize', throttledChangeScreen);
+    window.addEventListener('resize', timeoutChangeScreen);
 
-    return () => window.removeEventListener('resize', throttledChangeScreen);
+    return () => window.removeEventListener('resize', timeoutChangeScreen);
   }, []);
 
   const {
@@ -121,18 +106,12 @@ function App() {
   return (
     <CurrentUserContext.Provider value={{
       device,
+      movies,
+      setMovies,
       currentUser,
       setCurrentUser,
       isLoading,
       setLoading,
-      queryText,
-      setQueryText,
-      moviesList,
-      setMoviesList,
-      savedMoviesList,
-      setSavedMoviesList,
-      toggleState,
-      setToggleState,
       values,
       setValues,
       errors,
@@ -182,9 +161,7 @@ function App() {
           { currentUser.username ? <Redirect to="/"/> : <Login /> }
           </Route>
 
-          <Route path="*">
-            <NotFound />
-          </Route>
+          <Route path="*" component={NotFound} />
 
         </Switch>
       </div>

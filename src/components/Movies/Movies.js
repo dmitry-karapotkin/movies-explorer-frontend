@@ -1,53 +1,70 @@
 import './Movies.css';
 import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import { useState, useContext } from 'react';
-import { api } from '../../utils/MoviesApi';
+import { useState, useContext, useEffect } from 'react';
+
 import { api as mainApi } from '../../utils/MainApi';
+import { api as moviesApi } from '../../utils/MoviesApi';
 import filterMovies from '../../utils/search';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import Popup from '../Popup/Popup';
 
 function Movies() {
-  const inputSearchId = "search-text-movies";
-  const [isError, setError] = useState(false);
-  const [isFound, setFound] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
+  const inputSearchId = "moviesListQuery";
   const {
+    movies,
+    setMovies,
     isPopupOpen,
     setPopupOpen,
     setLoading,
     isSuccess,
     setSuccess,
-    moviesList,
-    setMoviesList,
-    savedMoviesList,
-    setSavedMoviesList,
-    queryText,
-    toggleState,
   } = useContext(CurrentUserContext);
 
-  function handleSearchSubmit (e) {
+  const initIsFound = movies.query[inputSearchId] ?
+                      movies.moviesListQuery.length > 0 : true;
+  const [isError, setError] = useState(false);
+  const [isFound, setFound] = useState(initIsFound);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    moviesApi.getMovies()
+      .then((data) => {
+        setMovies({
+          type: "update",
+          key: "moviesList",
+          value: data
+        })
+      })
+      .catch(err => console.log(err));
+    mainApi.getMovies()
+      .then((data) => {
+        setMovies({
+          type: "update",
+          key: "savedMoviesList",
+          value: data
+        });
+      })
+      .catch(err => console.log(err));
+  }, []);
+
+  function handleSearchSubmit (e, queryText) {
     e.preventDefault();
-    if (queryText[inputSearchId]) {
+    if (queryText) {
       setLoading(true);
       setError(false);
-      api.getMovies()
-      .then((data) => {
-        const filteredMovies = filterMovies(
-          data,
-          queryText[inputSearchId],
-          toggleState[inputSearchId]
-        );
-        setFound(filteredMovies.length > 0);
-        setMoviesList(filteredMovies);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(true);
-        setLoading(false);
-        console.log(err);
+      const filteredMovies = filterMovies(
+        movies.moviesList,
+        queryText,
+        movies.toggle[inputSearchId]
+      );
+      setFound(filteredMovies.length > 0);
+      setMovies({
+        type: "update",
+        key: inputSearchId,
+        value: filteredMovies
       });
+      setLoading(false);
     } else {
       setErrorMessage("Нужно ввести ключевое слово");
       setPopupOpen(true);
@@ -72,7 +89,13 @@ function Movies() {
     if (isSaved) {
       mainApi.deleteMovie(movie.movieId)
         .then((_) => {
-          setSavedMoviesList(savedMoviesList.filter(item => item.movieId !== movie.movieId));
+          setMovies(
+            {
+              type: "update",
+              key: "savedMoviesList",
+              value: movies.savedMoviesList.filter(item => item.movieId !== movie.movieId)
+            }
+          )
           setSaved(false);
         })
         .catch(err => {
@@ -84,7 +107,13 @@ function Movies() {
       mainApi.postMovie(movie)
         .then((data) => {
           if (data) {
-            setSavedMoviesList([...savedMoviesList, data]);
+            setMovies(
+              {
+                type: "update",
+                key: "savedMoviesList",
+                value: [...movies.savedMoviesList, data]
+              }
+            )
             setSaved(true);
           }
         })
@@ -101,9 +130,10 @@ function Movies() {
       <SearchForm
         handleSearchSubmit={handleSearchSubmit}
         inputId={inputSearchId}
+        cards={movies.moviesList}
       />
       <MoviesCardList
-        cardList={moviesList}
+        moviesList={movies.moviesListQuery}
         handleClick={handleSaveClick}
         isError={isError}
         isSelected={false}

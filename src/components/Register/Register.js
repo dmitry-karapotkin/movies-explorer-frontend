@@ -1,15 +1,16 @@
 import './Register.css';
-import mainLogo from '../../images/logo.svg';
 import FormInput from '../FormInput/FormInput';
 import Popup from '../Popup/Popup';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { api } from '../../utils/MainApi';
+import Logo from '../Logo/Logo';
 
 function Register() {
   const formName = "register-form";
   const {
+    setCurrentUser,
     values,
     errors,
     setErrors,
@@ -31,6 +32,9 @@ function Register() {
         if (data.email) {
           setSuccess(true);
           setPopupOpen(true);
+          setCurrentUser({
+            id: data._id,
+          });
         }
       })
       .catch(err => {
@@ -45,11 +49,7 @@ function Register() {
 
   return (
     <main className="register">
-      <img
-        className="register__logo"
-        src={mainLogo}
-        alt="site-logo"
-      />
+      <Logo />
       <h2 className="register__welcome-text">
         Добро пожаловать!
       </h2>

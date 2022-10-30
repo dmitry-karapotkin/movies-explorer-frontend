@@ -1,16 +1,11 @@
 import './NavTab.css';
-import mainLogo from '../../images/logo.svg';
 import { Link } from 'react-router-dom';
+import Logo from '../Logo/Logo';
 
 function NavTab() {
   return (
     <nav className="nav-tab">
-      <Link className="nav-tab__logo" to="/">
-        <img
-          src={mainLogo}
-          alt="site-logo"
-          />
-      </Link>
+      <Logo />
       <Link
         className="nav-tab__reg-link"
         to="/signup"

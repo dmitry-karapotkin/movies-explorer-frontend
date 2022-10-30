@@ -25,13 +25,17 @@
 }
 
 .not-found__back-link {
+  background-color: transparent;
+  border: 0;
+  width: fit-content;
   font-weight: 400;
   font-size: 14px;
   line-height: 17px;
   text-align: center;
   color: #4285F4;
-  margin: 184px 0 0;
+  margin: 184px auto 0;
   text-decoration: none;
+  cursor: pointer;
 }
 
 @media (max-width: 320px) {
@@ -52,7 +56,7 @@
   .not-found__back-link {
     font-size: 12px;
     line-height: 15px;
-    margin: auto 0 0;
+    margin: auto auto 0;
     justify-self: end;
   }
 }

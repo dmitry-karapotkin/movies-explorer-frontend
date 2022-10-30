@@ -12,12 +12,12 @@ function FormInput ({ id, label, type, pattern, minLength, maxLength }) {
       </label>
       <input
         id={id}
+        pattern={pattern}
         type={type}
         className="form-input__input"
         value={values[id] || ""}
         onChange={handleChange}
         required
-        pattern={pattern}
         minLength={minLength}
         maxLength={maxLength}
       />

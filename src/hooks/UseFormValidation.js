@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { REGEX_EMAIL } from '../utils/constants';
 
 
 export function useFormValidation () {
@@ -14,11 +15,21 @@ export function useFormValidation () {
   const handleChange = (e) => {
     const {id, value} = e.target;
     setValues({...values, [id]: value});
-    setErrors({...errors, [id]: e.target.validationMessage});
+    let error;
+    let isFormValid;
+    if (id.includes("email")) {
+      const regexEmailError = REGEX_EMAIL.test(value);
+      error = regexEmailError ? "": "Неверный формат почты";
+      isFormValid = e.target.closest('form').checkValidity() && regexEmailError;
+    } else {
+      error = e.target.validationMessage;
+      isFormValid = e.target.closest('form').checkValidity();
+    }
+    setErrors({...errors, [id]: error});
     setIsValid(
       {
         ...isValid,
-        [e.target.closest('form').name]: e.target.closest('form').checkValidity()
+        [e.target.closest('form').name]: isFormValid
       }
     );
   }

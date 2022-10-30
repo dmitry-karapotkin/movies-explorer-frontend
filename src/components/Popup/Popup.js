@@ -9,7 +9,12 @@ import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 function Popup ({ isPopupOpen, setPopupOpen, isSuccess, successMessage, errorMessage }) {
 
-  const { resetForm, setCurrentUser, values} = useContext(CurrentUserContext);
+  const {
+    currentUser,
+    resetForm,
+    setCurrentUser,
+    values
+  } = useContext(CurrentUserContext);
 
   const history = useHistory();
 
@@ -30,13 +35,15 @@ function Popup ({ isPopupOpen, setPopupOpen, isSuccess, successMessage, errorMes
 
   function handleClose() {
     setPopupOpen(false);
-    if (isSuccess && history.location.pathname === '/signup') {
+    const isSignup = history.location.pathname === '/signup';
+    if (isSuccess && isSignup) {
       setCurrentUser({
+        ...currentUser,
         username: values["register-name"],
-        email: values["register-email"]
+        email: values["register-email"],
       });
       resetForm();
-      history.push('/');
+      history.push('/movies');
     }
   };
 

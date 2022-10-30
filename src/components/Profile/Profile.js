@@ -8,6 +8,7 @@ import Popup from '../Popup/Popup';
 function Profile () {
   const formName = "profile-form";
   const {
+    setMovies,
     values,
     setValues,
     errors,
@@ -76,6 +77,7 @@ function Profile () {
     api.logout()
       .then((data) => {
         setCurrentUser({});
+        setMovies({ type: "reset" });
         console.log(data.message);
         history.push("/");
       });

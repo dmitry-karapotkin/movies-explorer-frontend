@@ -3,26 +3,25 @@ import { useState, useContext, useEffect } from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
-function MoviesCardList ({ cardList, isError, isSelected, isFound, handleClick }) {
+function MoviesCardList ({ moviesList, isError, isSelected, isFound, handleClick }) {
   const {
+    movies,
     device,
-    savedMoviesList,
   } = useContext(CurrentUserContext);
   const [cardsNumber, setCardsNumber] = useState(0);
 
-
   useEffect(() => {
-    const numCards = cardList.length > device.initGrid ?
-                     device.initGrid : cardList.length;
+    const numCards = moviesList.length > device.initGrid ?
+                     device.initGrid : moviesList.length;
     setCardsNumber(numCards);
-  }, [cardList]);
+  }, [movies]);
 
   function handleLoadButtonClick (e) {
     setCardsNumber(cardsNumber + device.addCards);
   };
 
   function isLiked (id) {
-    return savedMoviesList.some((item) => {
+    return movies.savedMoviesList.some((item) => {
       return item.movieId === id;
     })
   };
@@ -32,7 +31,7 @@ function MoviesCardList ({ cardList, isError, isSelected, isFound, handleClick }
       <div className="card-list__grid">
       {
         cardsNumber > 0 ?
-          cardList.slice(0, cardsNumber).map((item) => {
+          moviesList.slice(0, cardsNumber).map((item) => {
             return (
               <MoviesCard
                 card={item}
@@ -59,7 +58,7 @@ function MoviesCardList ({ cardList, isError, isSelected, isFound, handleClick }
             ""
         }
         {
-          cardsNumber < cardList.length ?
+          cardsNumber < moviesList.length ?
             <button
               className="card-list__load-button"
               onClick={handleLoadButtonClick}
