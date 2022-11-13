@@ -81,7 +81,6 @@ function App() {
     const changeScreen = () => {
       const width = window.innerWidth;
       setDevice(width);
-      console.log(width);
     }
 
     const timeoutChangeScreen = wrapTimeout(changeScreen, 2000);
