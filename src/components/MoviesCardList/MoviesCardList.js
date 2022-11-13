@@ -13,7 +13,7 @@ function MoviesCardList ({ moviesList, isError, isSelected, isFound, handleClick
   useEffect(() => {
     const numCards = moviesList.length > device.initGrid ?
                      device.initGrid : moviesList.length;
-    setCardsNumber(numCards);
+    setCardsNumber(cardsNumber > numCards ? cardsNumber : numCards);
   }, [movies]);
 
   function handleLoadButtonClick (e) {
