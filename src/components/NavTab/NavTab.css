@@ -46,7 +46,7 @@
 @media (max-width: 320px) {
   .nav-tab__reg-link {
     font-size: 10px;
-    margin: 0 14px;
+    margin: 0 14px 0 auto;
   }
 
   .nav-tab__login-button {
