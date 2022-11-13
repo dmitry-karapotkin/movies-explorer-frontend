@@ -10,11 +10,6 @@
   background-color: #202020;
 }
 
-.register__logo {
-  width: 38px;
-  height: 38px;
-}
-
 .register__welcome-text {
   font-weight: 500;
   font-size: 24px;
@@ -44,6 +39,11 @@
   margin: auto 0 16px;
   border: 0;
   cursor: pointer;
+}
+
+.register__submit-button_disabled {
+  background-color: #EE3465;
+  cursor: not-allowed;
 }
 
 .register__alternative-text {

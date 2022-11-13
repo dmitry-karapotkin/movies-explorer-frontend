@@ -1,12 +1,12 @@
 import './Header.css';
 import Navigation from '../Navigation/Navigation';
-import mainLogo from '../../images/logo.svg';
 import profileIcon from '../../images/account-icon.svg';
 import menuIcon from '../../images/menu-icon.svg';
 import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import Logo from '../Logo/Logo';
 
-function Header() {
+function Header({ isMainPage }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   function handleMenuClick() {
@@ -14,13 +14,8 @@ function Header() {
   };
 
   return (
-    <header className="header">
-      <Link className="header__logo" to="/">
-        <img
-          src={mainLogo}
-          alt="site-logo"
-          />
-      </Link>
+    <header className={`header ${ isMainPage ? "header_main-page" : ""}`}>
+      <Logo />
       <nav className="header-nav">
         <NavLink
           className="header-nav__link"

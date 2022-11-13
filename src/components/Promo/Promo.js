@@ -1,11 +1,15 @@
 import './Promo.css';
 import planetImage from '../../images/planet.svg';
 import NavTab from '../NavTab/NavTab';
+import { useContext } from 'react';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 function Promo() {
+  const { currentUser } = useContext(CurrentUserContext);
+
   return (
     <section className="promo">
-      <NavTab />
+      { currentUser.username ? "" : <NavTab /> }
       <div className="promo__content">
         <img
           className="promo__planet-image"

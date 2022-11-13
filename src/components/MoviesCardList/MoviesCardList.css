@@ -33,6 +33,12 @@
   border: 0;
 }
 
+.card-list__error-message {
+  text-align: center;
+  width: 100%;
+  color: white;
+}
+
 @media (max-width: 1024px) {
   .card-list__grid {
     grid-template-columns: repeat(3, 1fr);
